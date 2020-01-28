@@ -32,8 +32,6 @@ namespace TistoryAPISharp {
 
         #region LocalVariable
         private string str_AccessTokenNotSet = "Access token not set. set access token first.";
-        private string str_ConnectionError = "Access token has expired or remote connection error.";
-        private string str_ModifyError = "Please check if the access torque is expired or out of connection, and the correct PostID.";
 
         private string ClientID = string.Empty;
         private string AccessToken = string.Empty;
@@ -67,13 +65,18 @@ namespace TistoryAPISharp {
                 string url = $"https://www.tistory.com/apis/blog/info?access_token={AccessToken}{GetOutputStyle(outputStyle)}";
                 return Get(url);
             }
-            catch (Exception ex) {
-                switch (ex.HResult) {
-                    case -2146233079:
-                    throw new Exception(str_ConnectionError);
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
                 }
             }
-            return string.Empty;
         }
 
         // 글 목록
@@ -86,13 +89,18 @@ namespace TistoryAPISharp {
                 string url = $"https://www.tistory.com/apis/post/list?access_token={AccessToken}{GetOutputStyle(outputStyle)}&blogName={blogName}&page={pageNumber.ToString()}";
                 return Get(url);
             }
-            catch (Exception ex) {
-                switch (ex.HResult) {
-                    case -2146233079:
-                    throw new Exception(str_ConnectionError);
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
                 }
             }
-            return string.Empty;
         }
 
         // 글 읽기
@@ -105,13 +113,18 @@ namespace TistoryAPISharp {
                 string url = $"https://www.tistory.com/apis/post/read?access_token={AccessToken}{GetOutputStyle(outputStyle)}&blogName={blogName}&postId={postID}";
                 return Get(url);
             }
-            catch (Exception ex) {
-                switch (ex.HResult) {
-                    case -2146233079:
-                    throw new Exception(str_ConnectionError);
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
                 }
             }
-            return string.Empty;
         }
 
         // 글 쓰기
@@ -139,14 +152,18 @@ namespace TistoryAPISharp {
 
                 return Post("https://www.tistory.com/apis/post/write", args);
             }
-            catch (Exception ex) {
-                switch (ex.HResult) {
-                    case -2146233079:
-                    throw new Exception(str_ConnectionError);
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
                 }
             }
-
-            return string.Empty;
         }
 
         // 글 수정
@@ -175,16 +192,21 @@ namespace TistoryAPISharp {
 
                 return Post("https://www.tistory.com/apis/post/modify", args);
             }
-            catch (Exception ex) {
-                switch (ex.HResult) {
-                    case -2146233079:
-                    throw new Exception(str_ModifyError);
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
                 }
             }
-
-            return string.Empty;
         }
 
+        // 글 첨부 (미완성)
         public string AttatchFile(string blogName, string filePath) {
             try {
                 Dictionary<string, string> args = new Dictionary<string, string>();
@@ -194,15 +216,67 @@ namespace TistoryAPISharp {
                 FileStream file = new FileStream(filePath, FileMode.Open);
                 return PostFileAsync("https://www.tistory.com/apis/post/attach", args, file).Result;
             }
-            catch(Exception ex) {
-                switch (ex.HResult) {
-                    case -2146233079:
-                    throw new Exception(str_ConnectionError);
+            catch(WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
                 }
-                throw ex;
+                else {
+                    throw ex;
+                }
             }
         }
 
+        // 카테고리 얻기
+        public string GetCategory(OutputStyle outputStyle, string blogName) {
+            try {
+                if (string.IsNullOrEmpty(AccessToken)) {
+                    throw new Exception(str_AccessTokenNotSet);
+                }
+
+                string url = $"https://www.tistory.com/apis/category/list?access_token={AccessToken}{GetOutputStyle(outputStyle)}&blogName={blogName}";
+                return Get(url);
+            }
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
+
+        //
+        public string GetRecentComment(OutputStyle outputStyle, string blogName, int page, int count) {
+            try {
+                if (string.IsNullOrEmpty(AccessToken)) {
+                    throw new Exception(str_AccessTokenNotSet);
+                }
+            
+                string url = $"https://www.tistory.com/apis/comment/newest?access_token={AccessToken}{GetOutputStyle(outputStyle)}&blogName={blogName}&page={page.ToString()}&count={count.ToString()}";
+                return Get(url);
+            }
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
         #endregion
 
 
