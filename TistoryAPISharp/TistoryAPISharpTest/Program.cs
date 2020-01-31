@@ -11,7 +11,9 @@ namespace TistoryAPISharpTest {
         static void Main(string[] args) {
             TistoryAPISharp.TistoryAPISharp api = new TistoryAPISharp.TistoryAPISharp();
 
-            api.SetAccessToken("de76d87acf4be0828e12b47b9e35a11e_8a6717bfadfb0101869eb95985547a37");
+            api.SetClientID("a930e3a20336c67c57dd26312994d007");
+            api.GetAccessTokenFromWeb("https://mos6502.tistory.com/");
+            //api.SetAccessToken("682114ff5ed4d109ec118955fcd3e8a2_cd7ead433f61a2c830129e23ac8a8638");
 
             // 블로그 정보 얻기
             //string result = api.GetBlogInformation(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON);
@@ -30,18 +32,28 @@ namespace TistoryAPISharpTest {
 
             // 파일 첨부
             //string result = api.AttatchFile("mos6502", "C:\\Users\\64bitm\\Desktop\\nhkNews\\logo.jpg");
-            
+
             // 카테고리 얻기
             //string result = api.GetCategory(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON, "mos6502");
-            
+
             // 최근 댓글 목록
-            string result = api.GetRecentComment(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON, "mos6502",1,10);
+            //string result = api.GetRecentComment(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON, "mos6502",1,10);
+
+            // 게시글 댓글 목록
+            //string result = api.GetCommentFromPost(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON, "mos6502","3");
+
+            // 댓글 작성
+            //string result = api.ModifyComment(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON, "mos6502", "3", "12051330", "테스트 댓글로 수정", TistoryAPISharp.TistoryAPISharp.SecretComment.Secret);
+
+            // 댓글 삭제
+            //string result = api.DeleteComment(TistoryAPISharp.TistoryAPISharp.OutputStyle.XML, "mos6502", "3", "12051328");
+            
 
             //if (string.IsNullOrEmpty(result)) {
             //    Console.WriteLine("Request Fail");
             //}
             //else {
-                Console.WriteLine(result);
+              //  Console.WriteLine(result);
             //}
 
             Console.ReadLine();

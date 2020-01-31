@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Net.Http;
@@ -24,21 +25,26 @@ namespace TistoryAPISharp {
             Public
         }
 
-        public enum acceptComment {
+        public enum AcceptComment {
             Allow = 1,
             Deny = 0
+        }
+
+        public enum SecretComment {
+            Pulbic = 0,
+            Secret = 1
         }
         #endregion
 
         #region LocalVariable
         private string str_AccessTokenNotSet = "Access token not set. set access token first.";
-
+        private string str_ClientIDNotSet = "App Client ID not set. set App Client ID first.";
         private string ClientID = string.Empty;
         private string AccessToken = string.Empty;
         #endregion
 
         #region Get,Set Method
-        private string GetClientID() {
+        private string _GetClientID() {
             return this.ClientID;
         }
 
@@ -46,7 +52,7 @@ namespace TistoryAPISharp {
             this.ClientID = ClientID;
         }
 
-        private string GetAccessToken() {
+        private string _GetAccessToken() {
             return this.AccessToken;
         }
         public void SetAccessToken(string AccessToken) {
@@ -55,6 +61,16 @@ namespace TistoryAPISharp {
         #endregion
 
         #region Functions
+        // 엑세스 토큰 얻기
+        public void GetAccessTokenFromWeb(string blogUrl) {
+            if (string.IsNullOrEmpty(_GetClientID())) {
+                throw new Exception(str_ClientIDNotSet);
+            }
+            
+            string url = $"https://www.tistory.com/oauth/authorize?client_id={_GetClientID()}&redirect_uri={blogUrl}&response_type=token";
+            Process.Start(url);
+        }
+
         // 블로그 정보
         public string GetBlogInformation(OutputStyle outputStyle) {
             try {
@@ -67,10 +83,10 @@ namespace TistoryAPISharp {
             }
             catch (WebException ex) {
                 var responseStream = ex.Response?.GetResponseStream();
-
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
-                        return reader.ReadToEnd();
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
+                        string temp = reader.ReadToEnd();
+                        return temp;
                     }
                 }
                 else {
@@ -93,7 +109,7 @@ namespace TistoryAPISharp {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -117,7 +133,7 @@ namespace TistoryAPISharp {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -129,7 +145,7 @@ namespace TistoryAPISharp {
 
         // 글 쓰기
         public string WritePost(OutputStyle outputStyle, string blogName, string title, string content, string tag = "", Visibillity visibillity = Visibillity.Private,
-            acceptComment acceptComment = acceptComment.Deny, string category = "0", string password = "",
+            AcceptComment acceptComment = AcceptComment.Deny, string category = "0", string password = "",
             string published = "", string slogan = "") {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
@@ -156,7 +172,7 @@ namespace TistoryAPISharp {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -168,13 +184,13 @@ namespace TistoryAPISharp {
 
         // 글 수정
         public string ModifyPost(OutputStyle outputStyle, string blogName, string PostID, string title, string content, string tag = "", Visibillity visibillity = Visibillity.Private,
-            acceptComment acceptComment = acceptComment.Deny, string category = "0", string password = "",
+            AcceptComment acceptComment = AcceptComment.Deny, string category = "0", string password = "",
             string published = "", string slogan = "") {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
                 }
-                
+
                 Dictionary<string, string> args = new Dictionary<string, string>();
                 args.Add("access_token", AccessToken);
                 args.Add("output", outputStyle == OutputStyle.JSON ? "json" : "");
@@ -196,7 +212,7 @@ namespace TistoryAPISharp {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -216,11 +232,11 @@ namespace TistoryAPISharp {
                 FileStream file = new FileStream(filePath, FileMode.Open);
                 return PostFileAsync("https://www.tistory.com/apis/post/attach", args, file).Result;
             }
-            catch(WebException ex) {
+            catch (WebException ex) {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -244,7 +260,7 @@ namespace TistoryAPISharp {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -254,13 +270,13 @@ namespace TistoryAPISharp {
             }
         }
 
-        //
+        // 최근 댓글 목록
         public string GetRecentComment(OutputStyle outputStyle, string blogName, int page, int count) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
                 }
-            
+
                 string url = $"https://www.tistory.com/apis/comment/newest?access_token={AccessToken}{GetOutputStyle(outputStyle)}&blogName={blogName}&page={page.ToString()}&count={count.ToString()}";
                 return Get(url);
             }
@@ -268,7 +284,7 @@ namespace TistoryAPISharp {
                 var responseStream = ex.Response?.GetResponseStream();
 
                 if (responseStream != null) {
-                    using (var reader = new StreamReader(responseStream)) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
                         return reader.ReadToEnd();
                     }
                 }
@@ -279,6 +295,124 @@ namespace TistoryAPISharp {
         }
         #endregion
 
+        // 게시글 댓글 목록
+        public string GetCommentFromPost(OutputStyle outputStyle, string blogName, string postID) {
+            try {
+                if (string.IsNullOrEmpty(AccessToken)) {
+                    throw new Exception(str_AccessTokenNotSet);
+                }
+
+                string url = $"https://www.tistory.com/apis/comment/list?access_token={AccessToken}{GetOutputStyle(outputStyle)}&blogName={blogName}&postId={postID}";
+                return Get(url);
+            }
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
+
+        // 댓글 작성
+        public string WriteComment(OutputStyle outputStyle, string blogName, string PostID, string content, SecretComment secret = SecretComment.Pulbic, string parentCommentID="") {
+            try {
+                if (string.IsNullOrEmpty(AccessToken)) {
+                    throw new Exception(str_AccessTokenNotSet);
+                }
+
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("access_token", AccessToken);
+                args.Add("output", outputStyle == OutputStyle.JSON ? "json" : "");
+                args.Add("blogName", blogName);
+                args.Add("postId", PostID);
+                args.Add("content", content);
+                args.Add("secret", secret.ToString("D"));
+                if (!string.IsNullOrEmpty(parentCommentID)) args.Add("parentId", parentCommentID);
+
+                return Post("https://www.tistory.com/apis/comment/write", args);
+            }
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
+
+        // 댓글 수정
+        public string ModifyComment(OutputStyle outputStyle, string blogName, string postID, string commentID, string content, SecretComment secret = SecretComment.Pulbic, string parentCommentID = "") {
+            try {
+                if (string.IsNullOrEmpty(AccessToken)) {
+                    throw new Exception(str_AccessTokenNotSet);
+                }
+
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("access_token", AccessToken);
+                args.Add("output", outputStyle == OutputStyle.JSON ? "json" : "");
+                args.Add("blogName", blogName);
+                args.Add("postId", postID);
+                args.Add("commentId", commentID);
+                args.Add("content", content);
+                args.Add("secret", secret.ToString("D"));
+                if (!string.IsNullOrEmpty(parentCommentID)) args.Add("parentId", parentCommentID);
+
+                return Post("https://www.tistory.com/apis/comment/modify", args);
+            }
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
+
+        // 댓글 삭제
+        public string DeleteComment(OutputStyle outputStyle, string blogName, string postID, string commentID) {
+            try {
+                if (string.IsNullOrEmpty(AccessToken)) {
+                    throw new Exception(str_AccessTokenNotSet);
+                }
+
+                Dictionary<string, string> args = new Dictionary<string, string>();
+                args.Add("access_token", AccessToken);
+                args.Add("output", outputStyle == OutputStyle.JSON ? "json" : "");
+                args.Add("blogName", blogName);
+                args.Add("postId", postID);
+                args.Add("commentId", commentID);
+
+                return Post("https://www.tistory.com/apis/comment/delete", args);
+            }
+            catch (WebException ex) {
+                var responseStream = ex.Response?.GetResponseStream();
+
+                if (responseStream != null) {
+                    using (var reader = new StreamReader(responseStream, Encoding.UTF8)) {
+                        return reader.ReadToEnd();
+                    }
+                }
+                else {
+                    throw ex;
+                }
+            }
+        }
 
         #region Get,Post Method
         private string Post(string address, Dictionary<string, string> args) {
@@ -316,7 +450,7 @@ namespace TistoryAPISharp {
                 httpClient.Dispose();
                 return response.Content.ReadAsStringAsync().Result;
             }
-            catch(Exception ex) {
+            catch (Exception ex) {
                 throw ex;
             }
         }
@@ -324,7 +458,8 @@ namespace TistoryAPISharp {
         private string Get(string address) {
             try {
                 using (var client = new WebClient()) {
-                    return client.DownloadString(address);
+                    var data = client.DownloadData(address);
+                    return Encoding.UTF8.GetString(data);
                 }
             }
             catch (Exception ex) {
