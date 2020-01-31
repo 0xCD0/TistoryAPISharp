@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 #endregion
 
 namespace TistoryAPISharp {
-    public class TistoryAPISharp {
+    public class TistoryAPI {
         #region Enums
         public enum OutputStyle {
             XML = 0,

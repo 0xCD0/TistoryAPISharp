@@ -4,12 +4,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TistoryAPISharp;
 #endregion
 
 namespace TistoryAPISharpTest {
     class Program {
         static void Main(string[] args) {
-            TistoryAPISharp.TistoryAPISharp api = new TistoryAPISharp.TistoryAPISharp();
+            TistoryAPI api = new TistoryAPI();
 
             api.SetClientID("a930e3a20336c67c57dd26312994d007");
             api.GetAccessTokenFromWeb("https://mos6502.tistory.com/");
