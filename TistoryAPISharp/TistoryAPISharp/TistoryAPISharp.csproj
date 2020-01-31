@@ -1,7 +1,23 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Authors>64bitm</Authors>
+    <Company>CamomileApp</Company>
+    <Description>티스토리 OpenAPI를 C#으로 래핑한 라이브러리입니다.</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>tistory.png</PackageIcon>
+    <PackageIconUrl />
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <NeutralLanguage>ko-KR</NeutralLanguage>
+    <PackageProjectUrl>https://mos6502.tistory.com/</PackageProjectUrl>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="tistory.png">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
+  </ItemGroup>
 
 </Project>
