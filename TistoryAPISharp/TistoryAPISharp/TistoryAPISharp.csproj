@@ -11,6 +11,8 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <NeutralLanguage>ko-KR</NeutralLanguage>
     <PackageProjectUrl>https://mos6502.tistory.com/</PackageProjectUrl>
+    <Version>1.0.4</Version>
+    <PackageReleaseNotes>Output 출력 스타일을 기본 설정으로 XML로 변경.</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

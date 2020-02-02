@@ -66,13 +66,13 @@ namespace TistoryAPISharp {
             if (string.IsNullOrEmpty(_GetClientID())) {
                 throw new Exception(str_ClientIDNotSet);
             }
-            
+
             string url = $"https://www.tistory.com/oauth/authorize?client_id={_GetClientID()}&redirect_uri={blogUrl}&response_type=token";
             Process.Start(url);
         }
 
         // 블로그 정보
-        public string GetBlogInformation(OutputStyle outputStyle) {
+        public string GetBlogInformation(OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -96,7 +96,7 @@ namespace TistoryAPISharp {
         }
 
         // 글 목록
-        public string GetPostList(OutputStyle outputStyle, string blogName, int pageNumber) {
+        public string GetPostList(string blogName, int pageNumber, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -120,7 +120,7 @@ namespace TistoryAPISharp {
         }
 
         // 글 읽기
-        public string GetPostContent(OutputStyle outputStyle, string blogName, string postID) {
+        public string GetPostContent(string blogName, string postID, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -144,9 +144,9 @@ namespace TistoryAPISharp {
         }
 
         // 글 쓰기
-        public string WritePost(OutputStyle outputStyle, string blogName, string title, string content, string tag = "", Visibillity visibillity = Visibillity.Private,
+        public string WritePost(string blogName, string title, string content, string tag = "", Visibillity visibillity = Visibillity.Private,
             AcceptComment acceptComment = AcceptComment.Deny, string category = "0", string password = "",
-            string published = "", string slogan = "") {
+            string published = "", string slogan = "", OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -183,9 +183,9 @@ namespace TistoryAPISharp {
         }
 
         // 글 수정
-        public string ModifyPost(OutputStyle outputStyle, string blogName, string PostID, string title, string content, string tag = "", Visibillity visibillity = Visibillity.Private,
+        public string ModifyPost(string blogName, string PostID, string title, string content, string tag = "", Visibillity visibillity = Visibillity.Private,
             AcceptComment acceptComment = AcceptComment.Deny, string category = "0", string password = "",
-            string published = "", string slogan = "") {
+            string published = "", string slogan = "", OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -223,7 +223,7 @@ namespace TistoryAPISharp {
         }
 
         // 글 첨부 (미완성)
-        public string AttatchFile(string blogName, string filePath) {
+        private string AttatchFile(string blogName, string filePath, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 Dictionary<string, string> args = new Dictionary<string, string>();
                 args.Add("access_token", AccessToken);
@@ -247,7 +247,7 @@ namespace TistoryAPISharp {
         }
 
         // 카테고리 얻기
-        public string GetCategory(OutputStyle outputStyle, string blogName) {
+        public string GetCategory(string blogName, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -271,7 +271,7 @@ namespace TistoryAPISharp {
         }
 
         // 최근 댓글 목록
-        public string GetRecentComment(OutputStyle outputStyle, string blogName, int page, int count) {
+        public string GetRecentComment(string blogName, int page, int count, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -296,7 +296,7 @@ namespace TistoryAPISharp {
         #endregion
 
         // 게시글 댓글 목록
-        public string GetCommentFromPost(OutputStyle outputStyle, string blogName, string postID) {
+        public string GetCommentFromPost(string blogName, string postID, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -320,7 +320,7 @@ namespace TistoryAPISharp {
         }
 
         // 댓글 작성
-        public string WriteComment(OutputStyle outputStyle, string blogName, string PostID, string content, SecretComment secret = SecretComment.Pulbic, string parentCommentID="") {
+        public string WriteComment(string blogName, string PostID, string content, OutputStyle outputStyle = OutputStyle.XML, SecretComment secret = SecretComment.Pulbic, string parentCommentID = "") {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -352,7 +352,7 @@ namespace TistoryAPISharp {
         }
 
         // 댓글 수정
-        public string ModifyComment(OutputStyle outputStyle, string blogName, string postID, string commentID, string content, SecretComment secret = SecretComment.Pulbic, string parentCommentID = "") {
+        public string ModifyComment(string blogName, string postID, string commentID, string content, OutputStyle outputStyle = OutputStyle.XML, SecretComment secret = SecretComment.Pulbic, string parentCommentID = "") {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
@@ -385,7 +385,7 @@ namespace TistoryAPISharp {
         }
 
         // 댓글 삭제
-        public string DeleteComment(OutputStyle outputStyle, string blogName, string postID, string commentID) {
+        public string DeleteComment(string blogName, string postID, string commentID, OutputStyle outputStyle = OutputStyle.XML) {
             try {
                 if (string.IsNullOrEmpty(AccessToken)) {
                     throw new Exception(str_AccessTokenNotSet);
