@@ -12,9 +12,9 @@ namespace TistoryAPISharpTest {
         static void Main(string[] args) {
             TistoryAPI api = new TistoryAPI();
 
-            api.SetClientID("a930e3a20336c67c57dd26312994d007");
+            api.SetClientID("");
             api.GetAccessTokenFromWeb("https://mos6502.tistory.com/");
-            //api.SetAccessToken("682114ff5ed4d109ec118955fcd3e8a2_cd7ead433f61a2c830129e23ac8a8638");
+            //api.SetAccessToken("");
 
             // 블로그 정보 얻기
             //string result = api.GetBlogInformation(TistoryAPISharp.TistoryAPISharp.OutputStyle.JSON);
